@@ -1,7 +1,26 @@
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { Camera, ForkKnife, Settings2, Sparkles, Zap } from 'lucide-react'
 import { ReactNode } from 'react'
-
+import { AnimatedGroup } from './ui/animated-group'
+const transitionVariants = {
+  item: {
+    hidden: {
+      opacity: 0,
+      filter: "blur(12px)",
+      y: 12,
+    },
+    visible: {
+      opacity: 1,
+      filter: "blur(0px)",
+      y: 0,
+      transition: {
+        type: "spring",
+        bounce: 0.3,
+        duration: 1.5,
+      },
+    },
+  },
+};
 export default function Features() {
     return (
       <section className="bg-zinc-50 py-16 md:py-32 dark:bg-transparent">
@@ -11,41 +30,43 @@ export default function Features() {
               Built to help you know what you're putting in your mouth
             </h2>
           </div>
-          <div className="@min-4xl:max-w-full @min-4xl:grid-cols-2 justify-center mx-auto mt-8 grid max-w-sm gap-6 *:text-center md:mt-16">
-            <Card className="group shadow-zinc-950/5">
-              <CardHeader className="pb-3">
-                <CardDecorator>
-                  <Camera className="size-6" aria-hidden />
-                </CardDecorator>
+          <AnimatedGroup variants={transitionVariants} className="mt-8">
+            <div className="@min-4xl:max-w-full @min-4xl:grid-cols-2 justify-center mx-auto mt-8 grid max-w-sm gap-6 *:text-center md:mt-16">
+              <Card className="group shadow-zinc-950/5">
+                <CardHeader className="pb-3">
+                  <CardDecorator>
+                    <Camera className="size-6" aria-hidden />
+                  </CardDecorator>
 
-                <h3 className="mt-6 font-medium">Analyse a dish</h3>
-              </CardHeader>
+                  <h3 className="mt-6 font-medium">Analyse a dish</h3>
+                </CardHeader>
 
-              <CardContent>
-                <p className="text-sm">
-                  Take/upload a photo of a dish of you're choosing so that we
-                  can analyse it and give you all the ingredients used.
-                </p>
-              </CardContent>
-            </Card>
+                <CardContent>
+                  <p className="text-sm">
+                    Take/upload a photo of a dish of you're choosing so that we
+                    can analyse it and give you all the ingredients used.
+                  </p>
+                </CardContent>
+              </Card>
 
-            <Card className="group shadow-zinc-950/5">
-              <CardHeader className="pb-3">
-                <CardDecorator>
-                  <ForkKnife className="size-6" aria-hidden />
-                </CardDecorator>
+              <Card className="group shadow-zinc-950/5">
+                <CardHeader className="pb-3">
+                  <CardDecorator>
+                    <ForkKnife className="size-6" aria-hidden />
+                  </CardDecorator>
 
-                <h3 className="mt-6 font-medium">You have full control</h3>
-              </CardHeader>
+                  <h3 className="mt-6 font-medium">You have full control</h3>
+                </CardHeader>
 
-              <CardContent>
-                <p className="mt-3 text-sm">
-                  From design elements to functionality, you have complete
-                  control to create a unique and personalized experience.
-                </p>
-              </CardContent>
-            </Card>
-          </div>
+                <CardContent>
+                  <p className="mt-3 text-sm">
+                    From design elements to functionality, you have complete
+                    control to create a unique and personalized experience.
+                  </p>
+                </CardContent>
+              </Card>
+            </div>
+          </AnimatedGroup>
         </div>
       </section>
     );

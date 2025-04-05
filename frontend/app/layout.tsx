@@ -11,6 +11,7 @@ import { ModeToggle } from "@/components/toggle";
 import AnimatedButton from "@/components/ui/animated-button";
 import FooterSection from "@/components/footer";
 
+
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
