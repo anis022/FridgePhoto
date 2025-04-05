@@ -1,0 +1,31 @@
+services:
+  flask:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.flask
+    volumes:
+      - ./backend:/app/
+    ports:
+      - "5000:5000"
+    depends_on:
+      - nextjs
+
+  nextjs:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.nextjs
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules/
+
+  nginx:
+    build:
+      context: .
+      dockerfile: Dockerfile.nginx
+    ports:
+      - "80:80"
+    depends_on:
+      - flask
+      - nextjs
