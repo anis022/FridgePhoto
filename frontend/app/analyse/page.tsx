@@ -235,7 +235,7 @@ export default function Analyse() {
             <h2 className="text-4xl font-bold tracking-tight lg:text-5xl">
               It's time to get cookin'
             </h2>
-            <p className="mt-4 text-muted-foreground">
+            <p className="mt-4 text-white text-muted-foreground">
               Upload a photo of your fridge to begin analysis.
             </p>
             <div className="mt-12 flex flex-col items-center gap-6">
