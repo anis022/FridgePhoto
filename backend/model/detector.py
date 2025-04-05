@@ -6,11 +6,31 @@ import numpy as np
 import os
 from datetime import datetime
 
+# Get directory of current script (detector.py)
+script_dir = os.path.dirname(os.path.abspath(__file__))
 
-model = YOLO('yolo11x.pt')  # or yolov5s.pt depending on version
+# Construct model paths relative to detector.py
+modelx_path = os.path.join(script_dir, 'yolo11x.pt')
+modelbest_path = os.path.join(script_dir, 'yolo11best.pt')
+
+# Load models
+modelx = YOLO(modelx_path)
+modelbest = YOLO(modelbest_path)
 
 def detect_items(image, save_crops=False):
-    results = model(image)
+    resultsx = modelx(image, conf=0.5)
+    resultsbest = modelbest(image, conf=0.5)
+
+    countx = len(resultsx[0].boxes)
+    countbest = len(resultsbest[0].boxes)
+
+    if countx > countbest:
+        results = resultsx
+        model = modelx
+    else:
+        results = resultsbest
+        model = modelbest
+
     detections = results[0].boxes.data.cpu().numpy()
 
     crops = []
@@ -44,5 +64,5 @@ def detect_items(image, save_crops=False):
 if __name__ == '__main__':
     value = input("> ")
     image = Image.open(f'tests/test{value}.png')
-    items, crops = detect_items(image, True)
+    items, crops = detect_items(image)
     print(items)
