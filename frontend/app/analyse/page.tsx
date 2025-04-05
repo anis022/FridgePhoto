@@ -26,42 +26,30 @@ function MobileCamera({
   onCapture: (data: Blob | string) => void;
 }) {
   const videoRef = useRef<HTMLVideoElement>(null);
-  const [stream, setStream] = useState<MediaStream | null>(null);
   const [facingMode, setFacingMode] = useState<"environment" | "user">(
     "environment"
   );
 
   useEffect(() => {
     let activeStream: MediaStream | null = null;
-
     const startCamera = async () => {
       try {
         const mediaStream = await navigator.mediaDevices.getUserMedia({
-          video: {
-            facingMode,
-            width: { ideal: 640 },
-            height: { ideal: 480 },
-          },
+          video: { facingMode, width: { ideal: 640 }, height: { ideal: 480 } },
         });
         activeStream = mediaStream;
         if (videoRef.current) {
           videoRef.current.srcObject = mediaStream;
-          videoRef.current.onloadedmetadata = () => {
-            videoRef.current?.play();
-          };
+          videoRef.current.onloadedmetadata = () => videoRef.current?.play();
         }
-        setStream(mediaStream);
       } catch (error) {
         console.error("Error accessing mobile camera:", error);
       }
     };
-
     startCamera();
-
     return () => {
-      if (activeStream) {
+      if (activeStream)
         activeStream.getTracks().forEach((track) => track.stop());
-      }
     };
   }, [facingMode]);
 
@@ -78,10 +66,6 @@ function MobileCamera({
     }
   };
 
-  const toggleCamera = () => {
-    setFacingMode((prev) => (prev === "environment" ? "user" : "environment"));
-  };
-
   return (
     <div className="flex flex-col items-center gap-4">
       <video
@@ -92,7 +76,14 @@ function MobileCamera({
       />
       <div className="flex gap-3">
         <Button onClick={capturePhoto}>Capture</Button>
-        <Button onClick={toggleCamera} variant="secondary">
+        <Button
+          onClick={() =>
+            setFacingMode((prev) =>
+              prev === "environment" ? "user" : "environment"
+            )
+          }
+          variant="secondary"
+        >
           Switch
         </Button>
       </div>
@@ -110,9 +101,7 @@ function DesktopCamera({
 
   const capturePhoto = () => {
     const imageSrc = webcamRef.current?.getScreenshot();
-    if (imageSrc) {
-      onCapture(imageSrc);
-    }
+    if (imageSrc) onCapture(imageSrc);
   };
 
   return (
@@ -148,11 +137,9 @@ function DesktopCamera({
           <input
             type="file"
             accept="image/*"
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+            onChange={(e) => {
               const file = e.target.files?.[0];
-              if (file) {
-                onCapture(file);
-              }
+              if (file) onCapture(file);
             }}
             className="hidden"
           />
@@ -167,28 +154,20 @@ export default function Analyse() {
   const [screenshot, setScreenshot] = useState<string | null>(null);
 
   useEffect(() => {
-    const userAgent = navigator.userAgent || "";
-    setIsMobileDevice(/iPhone|iPad|iPod|Android/i.test(userAgent));
+    setIsMobileDevice(/iPhone|iPad|iPod|Android/i.test(navigator.userAgent));
   }, []);
 
   const handleImageUpload = async (image: Blob | string) => {
     const formData = new FormData();
-    if (typeof image === "string") {
-      if (image.startsWith("data:")) {
-        const blob = base64ToBlob(image);
-        formData.append("image", blob, "captured.jpg");
-      } else {
-        formData.append("imageUrl", image);
-      }
-    } else {
-      formData.append("image", image);
+    if (typeof image === "string" && image.startsWith("data:")) {
+      const blob = base64ToBlob(image);
+      formData.append("image", blob, "captured.jpg");
+    } else if (image instanceof Blob) {
+      formData.append("image", image, "uploaded.jpg");
     }
-    const apiEndpoint =
-      typeof window !== "undefined"
-        ? `${window.location.origin}/api/upload`
-        : "/api/upload";
+
     try {
-      const response = await fetch(apiEndpoint, {
+      const response = await fetch("/api/upload", {
         method: "POST",
         body: formData,
       });
@@ -197,31 +176,31 @@ export default function Analyse() {
         console.error("Upload error", response.status, errorText);
         return;
       }
-      const data = await response.json();
-      console.log("Server response:", data);
+
+      const data = await response.json(); // expected: { image: binary, items: [...] }
+
+      const imageBlob = new Blob([new Uint8Array(data.image.data)], {
+        type: "image/jpeg",
+      });
+      const imageUrl = URL.createObjectURL(imageBlob);
+
+      localStorage.setItem(
+        "fridgeResult",
+        JSON.stringify({
+          photo: imageUrl,
+          items: data.items,
+        })
+      );
+
+      setScreenshot(imageUrl);
     } catch (error) {
       console.error("Error uploading image:", error);
     }
   };
 
   const handleCapture = (data: Blob | string) => {
-    if (typeof data === "string") {
-      setScreenshot(data);
-      handleImageUpload(data);
-    } else {
-      const previewUrl = URL.createObjectURL(data);
-      setScreenshot(previewUrl);
-      handleImageUpload(data);
-    }
-  };
-
-  const handleMobileFile = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const previewUrl = URL.createObjectURL(file);
-      setScreenshot(previewUrl);
-      handleImageUpload(file);
-    }
+    setScreenshot(typeof data === "string" ? data : URL.createObjectURL(data));
+    handleImageUpload(data);
   };
 
   if (isMobileDevice === null) {
@@ -242,50 +221,27 @@ export default function Analyse() {
             It's time to get cookin'
           </h2>
           <p className="mt-4 text-muted-foreground">
-            Please provide us with a photo of your fridge so we can start our
-            analysis.
+            Upload a photo of your fridge to begin analysis.
           </p>
           <div className="mt-12 flex flex-col items-center gap-6">
             {isMobileDevice ? (
               <>
                 <MobileCamera onCapture={handleCapture} />
-                <Button
-                  asChild
-                  variant="outline"
-                  className="flex items-center gap-2"
-                >
-                  <label className="cursor-pointer">
-                    <Folder className="size-5" />
-                    Or Upload a photo
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={handleMobileFile}
-                      className="hidden"
-                    />
-                  </label>
-                </Button>
               </>
             ) : (
               <DesktopCamera onCapture={handleCapture} />
             )}
             {screenshot && (
               <div className="mt-8 flex flex-col items-center gap-4">
-                <div>
-                  <h3 className="text-lg font-medium">Captured Image:</h3>
-                  <img
-                    src={screenshot}
-                    alt="Captured"
-                    className="mt-4 max-w-sm rounded-2xl border shadow-md"
-                  />
-                </div>
-                <Button
-                  asChild
-                  size="sm"
-                >
-                  <Link href="/results">
+                <img
+                  src={screenshot}
+                  alt="Captured"
+                  className="max-w-sm rounded-2xl border shadow-md"
+                />
+                <Button asChild size="sm">
+                  <Link href="/results" className="flex items-center gap-2">
                     <Book className="size-5" />
-                    <span>Analayse Results</span>
+                    <span>Analyse Results</span>
                   </Link>
                 </Button>
               </div>
