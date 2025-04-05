@@ -10,6 +10,7 @@ import { ThemeProvider } from "@/components/theme-providers";
 import { ModeToggle } from "@/components/toggle";
 import AnimatedButton from "@/components/ui/animated-button";
 import FooterSection from "@/components/footer";
+import { HeroHeader } from "@/components/hero5-header";
 
 
 const geistSans = Geist({
@@ -43,7 +44,7 @@ export default function RootLayout({
             enableSystem
             disableTransitionOnChange
           >
-            <ModeToggle />
+            <HeroHeader />
 
             {children}
             <FooterSection />
