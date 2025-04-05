@@ -22,10 +22,10 @@ export default function connexion() {
                 <Logo className="size-15" />
               </Link>
               <h1 className="text-title mb-1 mt-4 text-xl font-semibold">
-                Connectez vous à votre compte MèchePro
+                Login to FridgePhoto
               </h1>
               <p className="text-sm">
-                Bienvenue! Connectez vous un compte pour commencer à analyser!
+                Welcome! Connect to start!
               </p>
             </div>
 
@@ -33,39 +33,39 @@ export default function connexion() {
 
             <div className="space-y-5">
               <div className="space-y-2">
-                <Label htmlFor="nom_utilisateur" className="block text-sm">
-                  Nom d'utilisateur
+                <Label htmlFor="username" className="block text-sm">
+                  Username
                 </Label>
                 <Input
                   type="text"
                   required
-                  name="nom_utilisateur"
-                  id="nom_utilisateur"
+                  name="username"
+                  id="username"
                 />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="mot_de_passe" className="text-title text-sm">
-                  Mot de Passe
+                <Label htmlFor="password" className="text-title text-sm">
+                  Password
                 </Label>
                 <Input
                   type="password"
                   required
-                  name="mot_de_passe"
-                  id="mot_de_passe"
+                  name="password"
+                  id="password"
                   className="input sz-md variant-mixed"
                 />
               </div>
 
-              <Button className="w-full">Se connecter</Button>
+              <Button className="w-full">Login</Button>
             </div>
           </div>
 
           <div className="bg-muted rounded-(--radius) border p-3">
             <p className="text-accent-foreground text-center text-sm">
-              Vous n'avez pas un compte ?
+              Don't have an account ?
               <Button asChild variant="link" className="px-2">
-                <Link href="/inscription">Créez un compte</Link>
+                <Link href="/signup">Create one here</Link>
               </Button>
             </p>
           </div>
