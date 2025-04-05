@@ -6,9 +6,6 @@ import { Camera, Folder } from "lucide-react";
 import { AnimatedGroup } from "@/components/ui/animated-group";
 import Webcam from "react-webcam";
 
-/* ------------------------------------------------------------------
-   Utility: Convert base64 string to a Blob
------------------------------------------------------------------- */
 const base64ToBlob = (base64: string) => {
   const parts = base64.split(",");
   const byteString = atob(parts[1]);
@@ -22,13 +19,16 @@ const base64ToBlob = (base64: string) => {
   return new Blob([ab], { type: mimeString });
 };
 
-/* ------------------------------------------------------------------
-   MobileCamera Component with toggle for camera facing mode
------------------------------------------------------------------- */
-function MobileCamera({ onCapture }: { onCapture: (data: Blob | string) => void }) {
+function MobileCamera({
+  onCapture,
+}: {
+  onCapture: (data: Blob | string) => void;
+}) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [stream, setStream] = useState<MediaStream | null>(null);
-  const [facingMode, setFacingMode] = useState<"environment" | "user">("environment");
+  const [facingMode, setFacingMode] = useState<"environment" | "user">(
+    "environment"
+  );
 
   useEffect(() => {
     let activeStream: MediaStream | null = null;
@@ -82,32 +82,28 @@ function MobileCamera({ onCapture }: { onCapture: (data: Blob | string) => void 
   };
 
   return (
-    <div>
+    <div className="flex flex-col items-center gap-4">
       <video
         ref={videoRef}
         autoPlay
         playsInline
-        style={{
-          width: "100%",
-          maxWidth: "400px",
-          borderRadius: "8px",
-          border: "1px solid #ccc",
-          marginBottom: "0.5rem",
-          transform: "translateZ(0)",
-        }}
+        className="w-full max-w-sm rounded-2xl border border-gray-300 shadow-sm"
       />
-      <div style={{ display: "flex", gap: "0.5rem", justifyContent: "center" }}>
-        <Button onClick={capturePhoto}>Capture Photo</Button>
-        <Button onClick={toggleCamera}>Switch Camera</Button>
+      <div className="flex gap-3">
+        <Button onClick={capturePhoto}>Capture</Button>
+        <Button onClick={toggleCamera} variant="secondary">
+          Switch
+        </Button>
       </div>
     </div>
   );
 }
 
-/* ------------------------------------------------------------------
-   DesktopCamera Component using react-webcam
------------------------------------------------------------------- */
-function DesktopCamera({ onCapture }: { onCapture: (data: Blob | string) => void }) {
+function DesktopCamera({
+  onCapture,
+}: {
+  onCapture: (data: Blob | string) => void;
+}) {
   const webcamRef = useRef<Webcam>(null);
   const [showWebcam, setShowWebcam] = useState(false);
 
@@ -126,32 +122,34 @@ function DesktopCamera({ onCapture }: { onCapture: (data: Blob | string) => void
             audio={false}
             ref={webcamRef}
             screenshotFormat="image/jpeg"
-            className="rounded-lg border"
+            className="rounded-2xl border shadow-sm"
           />
-          <Button onClick={capturePhoto} size="lg">
-            Capture Photo
-          </Button>
-          <Button onClick={() => setShowWebcam(false)} variant="ghost" size="sm">
-            Close Webcam
-          </Button>
+          <div className="flex gap-3">
+            <Button onClick={capturePhoto}>Capture</Button>
+            <Button onClick={() => setShowWebcam(false)} variant="ghost">
+              Close
+            </Button>
+          </div>
         </>
       ) : (
-        <Button onClick={() => setShowWebcam(true)} size="lg">
-          <Camera className="size-6" />
-          <span>Open Webcam</span>
+        <Button
+          onClick={() => setShowWebcam(true)}
+          className="flex items-center gap-2"
+        >
+          <Camera className="size-5" />
+          Open Webcam
         </Button>
       )}
-      <Button asChild size="lg" variant="outline">
-        <label className="flex items-center gap-2 cursor-pointer">
-          <Folder className="size-6" aria-hidden />
-          <span>Upload a photo</span>
+      <Button asChild variant="outline" className="flex items-center gap-2">
+        <label className="cursor-pointer">
+          <Folder className="size-5" />
+          Upload a photo
           <input
             type="file"
             accept="image/*"
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
               const file = e.target.files?.[0];
               if (file) {
-                // Pass the actual file object to onCapture
                 onCapture(file);
               }
             }}
@@ -163,9 +161,6 @@ function DesktopCamera({ onCapture }: { onCapture: (data: Blob | string) => void
   );
 }
 
-/* ------------------------------------------------------------------
-   Main Analyse Component with Client-Only Device Detection
------------------------------------------------------------------- */
 export default function Analyse() {
   const [isMobileDevice, setIsMobileDevice] = useState<boolean | null>(null);
   const [screenshot, setScreenshot] = useState<string | null>(null);
@@ -182,14 +177,15 @@ export default function Analyse() {
         const blob = base64ToBlob(image);
         formData.append("image", blob, "captured.jpg");
       } else {
-        // Non-data URL strings are not expected now
         formData.append("imageUrl", image);
       }
     } else {
       formData.append("image", image);
     }
     const apiEndpoint =
-      typeof window !== "undefined" ? `${window.location.origin}/api/upload` : "/api/upload";
+      typeof window !== "undefined"
+        ? `${window.location.origin}/api/upload`
+        : "/api/upload";
     try {
       const response = await fetch(apiEndpoint, {
         method: "POST",
@@ -207,7 +203,6 @@ export default function Analyse() {
     }
   };
 
-  // Unified capture handler that supports both base64 strings and file objects
   const handleCapture = (data: Blob | string) => {
     if (typeof data === "string") {
       setScreenshot(data);
@@ -231,10 +226,8 @@ export default function Analyse() {
   if (isMobileDevice === null) {
     return (
       <AnimatedGroup>
-        <section className="py-16 md:py-32">
-          <div className="mx-auto max-w-5xl px-6">
-            <div className="text-center">Loading camera...</div>
-          </div>
+        <section className="py-24 text-center">
+          <div className="text-lg font-medium">Loading camera...</div>
         </section>
       </AnimatedGroup>
     );
@@ -243,45 +236,51 @@ export default function Analyse() {
   return (
     <AnimatedGroup>
       <section className="py-16 md:py-32">
-        <div className="mx-auto max-w-5xl px-6">
-          <div className="text-center">
-            <h2 className="text-balance text-4xl font-semibold lg:text-5xl">
-              It's time to get cookin'
-            </h2>
-            <p className="mt-4">
-              Please provide us with a photo of your fridge so we can start our analysis.
-            </p>
-            <div className="mt-12 flex flex-wrap justify-center gap-4">
-              {isMobileDevice ? (
-                <>
-                  <MobileCamera onCapture={handleCapture} />
-                  <Button asChild size="lg" variant="outline">
-                    <label className="flex items-center gap-2 cursor-pointer">
-                      <Folder className="size-6" aria-hidden />
-                      <span>Or Upload a photo</span>
-                      <input
-                        type="file"
-                        accept="image/*"
-                        onChange={handleMobileFile}
-                        className="hidden"
-                      />
-                    </label>
-                  </Button>
-                </>
-              ) : (
-                <DesktopCamera onCapture={handleCapture} />
-              )}
-            </div>
+        <div className="mx-auto max-w-4xl px-6 text-center">
+          <h2 className="text-4xl font-bold tracking-tight lg:text-5xl">
+            It's time to get cookin'
+          </h2>
+          <p className="mt-4 text-muted-foreground">
+            Please provide us with a photo of your fridge so we can start our
+            analysis.
+          </p>
+          <div className="mt-12 flex flex-col items-center gap-6">
+            {isMobileDevice ? (
+              <>
+                <MobileCamera onCapture={handleCapture} />
+                <Button
+                  asChild
+                  variant="outline"
+                  className="flex items-center gap-2"
+                >
+                  <label className="cursor-pointer">
+                    <Folder className="size-5" />
+                    Or Upload a photo
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleMobileFile}
+                      className="hidden"
+                    />
+                  </label>
+                </Button>
+              </>
+            ) : (
+              <DesktopCamera onCapture={handleCapture} />
+            )}
             {screenshot && (
               <div className="mt-8">
                 <h3 className="text-lg font-medium">Captured Image:</h3>
-                <img src={screenshot} alt="Captured" className="mt-4 rounded-lg border" />
+                <img
+                  src={screenshot}
+                  alt="Captured"
+                  className="mt-4 max-w-sm rounded-2xl border shadow-md"
+                />
               </div>
             )}
           </div>
         </div>
       </section>
     </AnimatedGroup>
-
   );
 }
