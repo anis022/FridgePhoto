@@ -6,25 +6,27 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import React, { useState, useEffect } from "react";
-import Return from "@/components/ui/return";
+import { useRouter } from "next/navigation";
 
 export default function connexion() {
   // State for the form values (username and password)
   const [form, setForm] = useState({ username: "", password: "" });
   // Loading state while the login request is processing
   const [loading, setLoading] = useState(false);
-  // State for the message to display; it holds text and type ("error" or "success")
+  // State for the message to display; holds text and type ("error" or "success")
   const [loginMessage, setLoginMessage] = useState({ text: "", type: "" });
-  // State controlling visibility for the animation
+  // State controlling the animation (visible vs. fading out)
   const [visible, setVisible] = useState(false);
+  // Next.js router for navigation
+  const router = useRouter();
 
-  // When loginMessage.text changes, trigger the pop-up animation and fade out after 2 seconds
+  // Trigger pop-up animation and fade-out after 2 seconds when loginMessage.text changes
   useEffect(() => {
     if (loginMessage.text) {
       setVisible(true);
       const timer = setTimeout(() => {
         setVisible(false);
-        // Clear message after fade-out (additional 500ms for transition)
+        // Clear the message after the fade-out transition (e.g., 500ms)
         setTimeout(() => {
           setLoginMessage({ text: "", type: "" });
         }, 500);
@@ -38,7 +40,7 @@ export default function connexion() {
     setLoading(true);
     setLoginMessage({ text: "", type: "" });
     try {
-      // Sending the login request to your backend endpoint
+      // Send a POST request to your login endpoint
       const res = await fetch("http://localhost:5000/api/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -49,7 +51,12 @@ export default function connexion() {
         setLoginMessage({ text: data.error || "Login failed", type: "error" });
       } else {
         setLoginMessage({ text: "Login successful!", type: "success" });
-        // Optionally store the token, e.g. localStorage.setItem("token", data.token);
+        // Optionally store the token, e.g.:
+        // localStorage.setItem("token", data.token);
+        // Redirect to /analyse after a short delay so the user sees the success message
+        setTimeout(() => {
+          router.push("/analyse");
+        }, 1500);
       }
     } catch (err) {
       setLoginMessage({ text: "Server error: " + err, type: "error" });
@@ -60,7 +67,7 @@ export default function connexion() {
 
   return (
     <>
-      <Return />
+  
       <section className="relative flex min-h-screen bg-zinc-50 px-4 py-16 md:py-32 dark:bg-transparent">
         {/* Login form */}
         <form

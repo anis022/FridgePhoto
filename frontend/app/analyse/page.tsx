@@ -1,12 +1,14 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import Image from "next/image"; // Import Image to use for background
 import { Button } from "@/components/ui/button";
 import { Book, Camera, Folder } from "lucide-react";
 import { AnimatedGroup } from "@/components/ui/animated-group";
 import Webcam from "react-webcam";
 import Link from "next/link";
 
+// Converts a base64 image string to a Blob
 const base64ToBlob = (base64: string) => {
   const parts = base64.split(",");
   const byteString = atob(parts[1]);
@@ -177,7 +179,7 @@ export default function Analyse() {
         return;
       }
 
-      const data = await response.json(); // expected: { image: binary, items: [...] }
+      const data = await response.json();
 
       const imageBlob = new Blob([new Uint8Array(data.image.data)], {
         type: "image/jpeg",
@@ -214,41 +216,53 @@ export default function Analyse() {
   }
 
   return (
-    <AnimatedGroup>
-      <section className="py-16 md:py-32">
-        <div className="mx-auto max-w-4xl px-6 text-center">
-          <h2 className="text-4xl font-bold tracking-tight lg:text-5xl">
-            It's time to get cookin'
-          </h2>
-          <p className="mt-4 text-muted-foreground">
-            Upload a photo of your fridge to begin analysis.
-          </p>
-          <div className="mt-12 flex flex-col items-center gap-6">
-            {isMobileDevice ? (
-              <>
+    // Wrap the content in a main container with a background image
+    <main className="relative min-h-screen overflow-hidden">
+      {/* Background image container */}
+      <div className="absolute inset-0 -z-10">
+        <Image
+          src="/bg_analyse.png"   // Ensure this file is in your public folder
+          alt="Analysis Background"
+          fill
+          priority
+          className="object-cover blur-lg brightness-75"
+        />
+      </div>
+
+      <AnimatedGroup>
+        <section className="py-16 md:py-32">
+          <div className="mx-auto max-w-4xl px-6 text-center">
+            <h2 className="text-4xl font-bold tracking-tight lg:text-5xl">
+              It's time to get cookin'
+            </h2>
+            <p className="mt-4 text-white text-muted-foreground">
+              Upload a photo of your fridge to begin analysis.
+            </p>
+            <div className="mt-12 flex flex-col items-center gap-6">
+              {isMobileDevice ? (
                 <MobileCamera onCapture={handleCapture} />
-              </>
-            ) : (
-              <DesktopCamera onCapture={handleCapture} />
-            )}
-            {screenshot && (
-              <div className="mt-8 flex flex-col items-center gap-4">
-                <img
-                  src={screenshot}
-                  alt="Captured"
-                  className="max-w-sm rounded-2xl border shadow-md"
-                />
-                <Button asChild size="sm">
-                  <Link href="/results" className="flex items-center gap-2">
-                    <Book className="size-5" />
-                    <span>Analyse Results</span>
-                  </Link>
-                </Button>
-              </div>
-            )}
+              ) : (
+                <DesktopCamera onCapture={handleCapture} />
+              )}
+              {screenshot && (
+                <div className="mt-8 flex flex-col items-center gap-4">
+                  <img
+                    src={screenshot}
+                    alt="Captured"
+                    className="max-w-sm rounded-2xl border shadow-md"
+                  />
+                  <Button asChild size="sm">
+                    <Link href="/results" className="flex items-center gap-2">
+                      <Book className="size-5" />
+                      <span>Analyse Results</span>
+                    </Link>
+                  </Button>
+                </div>
+              )}
+            </div>
           </div>
-        </div>
-      </section>
-    </AnimatedGroup>
+        </section>
+      </AnimatedGroup>
+    </main>
   );
 }
