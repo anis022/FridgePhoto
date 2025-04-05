@@ -27,7 +27,7 @@ export default function Features() {
         <div className="@container mx-auto max-w-5xl px-6">
           <div className="text-center">
             <h2 className="text-balance text-4xl font-semibold lg:text-5xl">
-              Built to help you know what you're putting in your mouth
+              Turn fridge chaos into kitchen magic!
             </h2>
           </div>
           <AnimatedGroup variants={transitionVariants} className="mt-8">
@@ -38,13 +38,13 @@ export default function Features() {
                     <Camera className="size-6" aria-hidden />
                   </CardDecorator>
 
-                  <h3 className="mt-6 font-medium">Analyse a dish</h3>
+                  <h3 className="mt-6 font-medium">Photoshoot your fridge</h3>
                 </CardHeader>
 
                 <CardContent>
                   <p className="text-sm">
-                    Take/upload a photo of a dish of you're choosing so that we
-                    can analyse it and give you all the ingredients used.
+                    Take/upload a photo of your fridge so that we
+                    can analyse it and give you all the ingredients inside it.
                   </p>
                 </CardContent>
               </Card>
@@ -55,13 +55,13 @@ export default function Features() {
                     <ForkKnife className="size-6" aria-hidden />
                   </CardDecorator>
 
-                  <h3 className="mt-6 font-medium">You have full control</h3>
+                  <h3 className="mt-6 font-medium">We give you amazing suggestions</h3>
                 </CardHeader>
 
                 <CardContent>
                   <p className="mt-3 text-sm">
-                    From design elements to functionality, you have complete
-                    control to create a unique and personalized experience.
+                    From the ingridients found in your fridge, we will
+                    suggest you some amazing recipes to cook.
                   </p>
                 </CardContent>
               </Card>
