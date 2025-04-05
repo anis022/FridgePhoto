@@ -7,7 +7,7 @@ import os
 from datetime import datetime
 
 
-model = YOLO('yolov8n.pt')  # or yolov5s.pt depending on version
+model = YOLO('yolov8x.pt')  # or yolov5s.pt depending on version
 
 def detect_items(image, save_crops=False):
     results = model(image)
