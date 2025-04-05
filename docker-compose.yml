@@ -1,12 +1,12 @@
 services:
   flask:
     build:
-      context: ./mechepro
+      context: ./backend
       dockerfile: Dockerfile.flask
     volumes:
-      - ./mechepro:/app
+      - ./backend:/app/
     ports:
-      - "8000:8000"
+      - "5000:5000"
     depends_on:
       - nextjs
 
