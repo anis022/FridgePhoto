@@ -29,7 +29,7 @@ export default function Results() {
 
   const handleAddToFridge = async () => {
     try {
-      const res = await fetch("/api/fridge/add", {
+      const res = await fetch("http://localhost:5000/api/fridge/add", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ items }),
@@ -47,7 +47,7 @@ export default function Results() {
 
   const fetchFridgeItems = async () => {
     try {
-      const res = await fetch("/api/fridge/get");
+      const res = await fetch("http://localhost:5000/api/fridge/get");
       if (res.ok) {
         const data = await res.json();
         setFridgeItems(data.items || []);
@@ -59,7 +59,7 @@ export default function Results() {
 
   const handleRemoveItem = async (name: string) => {
     try {
-      const res = await fetch("/api/fridge/remove", {
+      const res = await fetch("http://localhost:5000/api/fridge/remove", {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name }),
