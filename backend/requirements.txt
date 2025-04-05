@@ -1,0 +1,11 @@
+# requirements.txt
+flask
+flask-cors
+pillow
+torch
+torchvision
+transformers
+openai
+numpy
+opencv-python
+ultralytics
