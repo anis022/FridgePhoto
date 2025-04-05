@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { Camera, Folder } from "lucide-react";
+import { Camera, Folder, Upload } from "lucide-react";
 import { AnimatedGroup } from "@/components/ui/animated-group";
 const transitionVariants = {
   item: {
@@ -45,11 +45,9 @@ function Analyse() {
                   </Link>
                 </Button>
 
-                <Button asChild size="lg" variant="outline">
-                  <Link href="/">
-                    <Folder className="size-6" aria-hidden />
-                    <span>Upload a photo</span>
-                  </Link>
+                <Button size="lg" variant="outline">
+                  <Folder className="size-6" aria-hidden />
+                  <span>Upload a photo</span>
                 </Button>
               </div>
             </div>
