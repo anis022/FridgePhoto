@@ -6,6 +6,7 @@ import { AnimatedGroup } from "@/components/ui/animated-group";
 import { ThemeProvider } from "@/components/theme-providers";
 import { ModeToggle } from "@/components/toggle";
 import AnimatedButton from "@/components/ui/animated-button";
+import { HeroHeader } from "@/components/hero5-header";
 
 export default function Home() {
   return (
