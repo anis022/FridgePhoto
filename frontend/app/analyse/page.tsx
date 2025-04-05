@@ -2,9 +2,10 @@
 
 import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Camera, Folder } from "lucide-react";
+import { Book, Camera, Folder } from "lucide-react";
 import { AnimatedGroup } from "@/components/ui/animated-group";
 import Webcam from "react-webcam";
+import Link from "next/link";
 
 const base64ToBlob = (base64: string) => {
   const parts = base64.split(",");
@@ -269,13 +270,24 @@ export default function Analyse() {
               <DesktopCamera onCapture={handleCapture} />
             )}
             {screenshot && (
-              <div className="mt-8">
-                <h3 className="text-lg font-medium">Captured Image:</h3>
-                <img
-                  src={screenshot}
-                  alt="Captured"
-                  className="mt-4 max-w-sm rounded-2xl border shadow-md"
-                />
+              <div className="mt-8 flex flex-col items-center gap-4">
+                <div>
+                  <h3 className="text-lg font-medium">Captured Image:</h3>
+                  <img
+                    src={screenshot}
+                    alt="Captured"
+                    className="mt-4 max-w-sm rounded-2xl border shadow-md"
+                  />
+                </div>
+                <Button
+                  asChild
+                  size="sm"
+                >
+                  <Link href="/results">
+                    <Book className="size-5" />
+                    <span>Analayse Results</span>
+                  </Link>
+                </Button>
               </div>
             )}
           </div>
