@@ -25,7 +25,7 @@ modelbest_path = os.path.join(script_dir, 'yolo11best.pt')
 modelx = YOLO(modelx_path)
 modelbest = YOLO(modelbest_path)
 
-def detect_items(image, save_crops=False, save_annotated=False):
+def detect_items(image, save_crops=False, save_annotated=True):
     image_np = np.array(image)
 
     resultsx = modelx(image, conf=0.5)

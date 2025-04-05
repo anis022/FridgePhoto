@@ -4,7 +4,6 @@ from dotenv import load_dotenv
 from flask_cors import CORS
 import os
 import bcrypt
-import jwt
 from datetime import datetime, timedelta
 
 load_dotenv()
