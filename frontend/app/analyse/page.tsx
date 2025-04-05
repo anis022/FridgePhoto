@@ -282,5 +282,6 @@ export default function Analyse() {
         </div>
       </section>
     </AnimatedGroup>
+
   );
 }

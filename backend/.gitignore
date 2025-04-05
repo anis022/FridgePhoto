@@ -7,3 +7,6 @@ __pycache__/
 *.db
 *.pt
 yolo11x.pt
+test
+train
+valid

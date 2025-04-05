@@ -1,0 +1,13 @@
+train: train/images
+val: valid/images
+test: test/images
+
+nc: 30
+names: ['apple', 'banana', 'blue berry', 'bread', 'brinjal', 'butter', 'cabbage', 'capsicum', 'carrot', 'cheese', 'chicken', 'chocolate', 'corn', 'cucumber', 'egg', 'flour', 'fresh cream', 'ginger', 'green beans', 'green chilly', 'green leaves', 'lemon', 'meat', 'milk', 'mushroom', 'potato', 'shrimp', 'stawberry', 'sweet potato', 'tomato']
+
+roboflow:
+  workspace: fridge-dataset
+  project: fridge-food-images
+  version: 13
+  license: CC BY 4.0
+  url: https://universe.roboflow.com/fridge-dataset/fridge-food-images/dataset/13
