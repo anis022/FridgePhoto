@@ -1,15 +1,16 @@
-from openai import OpenAI
+# services/recipe_gen.py
 import os
+import google.generativeai as genai
+from dotenv import load_dotenv
 
-client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+load_dotenv()
+genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
+
+model = genai.GenerativeModel("models/gemini-1.5-pro-latest")
 
 def generate_recipe(ingredients):
     ingredient_list = ", ".join([i['item'] for i in ingredients])
-    prompt = f"Create a recipe using the following ingredients: {ingredient_list}"
+    prompt = f"Create a healthy, simple recipe using the following ingredients: {ingredient_list}."
 
-    response = client.chat.completions.create(
-        model="gpt-4",
-        messages=[{"role": "user", "content": prompt}]
-    )
-
-    return response.choices[0].message.content
+    response = model.generate_content(prompt)
+    return response.text

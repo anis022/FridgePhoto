@@ -9,3 +9,6 @@ openai
 numpy
 opencv-python
 ultralytics
+pymongo[srv]
+dnspython
+python-dotenv
