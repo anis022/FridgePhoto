@@ -5,25 +5,40 @@ import { Logo } from "@/components/logo";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Return from "@/components/ui/return";
 
-// Login component using integrated message box
 export default function connexion() {
-  // State for username and password inputs
+  // State for the form values (username and password)
   const [form, setForm] = useState({ username: "", password: "" });
-  // Loading state for disabling button during fetch
+  // Loading state while the login request is processing
   const [loading, setLoading] = useState(false);
-  // Message state: holds an object with text and type ("error" or "success")
+  // State for the message to display; it holds text and type ("error" or "success")
   const [loginMessage, setLoginMessage] = useState({ text: "", type: "" });
+  // State controlling visibility for the animation
+  const [visible, setVisible] = useState(false);
 
-  // Handle form submission
+  // When loginMessage.text changes, trigger the pop-up animation and fade out after 2 seconds
+  useEffect(() => {
+    if (loginMessage.text) {
+      setVisible(true);
+      const timer = setTimeout(() => {
+        setVisible(false);
+        // Clear message after fade-out (additional 500ms for transition)
+        setTimeout(() => {
+          setLoginMessage({ text: "", type: "" });
+        }, 500);
+      }, 2000);
+      return () => clearTimeout(timer);
+    }
+  }, [loginMessage.text]);
+
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault(); // Prevent the default form refresh
+    e.preventDefault();
     setLoading(true);
-    setLoginMessage({ text: "", type: "" }); // Clear any existing messages
+    setLoginMessage({ text: "", type: "" });
     try {
-      // Send a POST request to your login endpoint
+      // Sending the login request to your backend endpoint
       const res = await fetch("http://localhost:5000/api/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -31,16 +46,12 @@ export default function connexion() {
       });
       const data = await res.json();
       if (!res.ok) {
-        // If login fails, set the error message (styled in red)
         setLoginMessage({ text: data.error || "Login failed", type: "error" });
       } else {
-        // On success, set the success message (styled in green)
         setLoginMessage({ text: "Login successful!", type: "success" });
-        // Optionally, store the token received from the backend:
-        // localStorage.setItem("token", data.token);
+        // Optionally store the token, e.g. localStorage.setItem("token", data.token);
       }
     } catch (err) {
-      // Network errors (e.g. "Failed to fetch") are caught here
       setLoginMessage({ text: "Server error: " + err, type: "error" });
     } finally {
       setLoading(false);
@@ -68,7 +79,7 @@ export default function connexion() {
             </div>
             <hr className="my-4 border-dashed" />
             <div className="space-y-5">
-              {/* Username field */}
+              {/* Username input field */}
               <div className="space-y-2">
                 <Label htmlFor="username" className="block text-sm">
                   Username
@@ -84,7 +95,7 @@ export default function connexion() {
                   }
                 />
               </div>
-              {/* Password field */}
+              {/* Password input field */}
               <div className="space-y-2">
                 <Label htmlFor="password" className="text-title text-sm">
                   Password
@@ -117,9 +128,13 @@ export default function connexion() {
           </div>
         </form>
 
-        {/* Integrated message box that appears at the top center */}
+        {/* Integrated login message box with animation */}
         {loginMessage.text && (
-          <div className="absolute top-4 left-1/2 transform -translate-x-1/2 z-20 max-w-md bg-background/80 backdrop-blur-lg rounded-2xl border border-white/20 p-4 shadow-lg">
+          <div
+            className={`absolute top-2 left-1/2 transform -translate-x-1/2 z-20 max-w-md bg-background/80 backdrop-blur-lg rounded-2xl border border-white/20 p-4 shadow-lg transition-all duration-500 ${
+              visible ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-4"
+            }`}
+          >
             <p
               className={`text-center text-lg font-semibold ${
                 loginMessage.type === "error"
