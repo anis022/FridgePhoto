@@ -1,3 +1,5 @@
+//home
+
 "use client"; // Declare this as a client component to use React hooks and browser APIs
 
 // Import necessary modules and custom components
