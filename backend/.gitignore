@@ -10,3 +10,5 @@ yolo11x.pt
 test
 train
 valid
+crops
+annotated

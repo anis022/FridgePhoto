@@ -5,44 +5,48 @@ from model.clip_utils import enrich_with_clip
 from services.recipe_gen import generate_recipe
 
 import os
-from PIL import Image
-import uuid
+from PIL import Image, UnidentifiedImageError
+from io import BytesIO
+import base64
 
 fridge_bp = Blueprint('fridge', __name__)
 UPLOAD_FOLDER = os.path.join("model", "crops")  # for saving if needed
 
-@fridge_bp.route('/upload', methods=['POST'])
+@fridge_bp.route('/api/upload', methods=['POST'])
 def upload():
     file = request.files.get('image')
     if not file:
         return jsonify({'error': 'No image uploaded'}), 400
 
-    filename = f"{uuid.uuid4().hex}.jpg"
-    path = os.path.join(UPLOAD_FOLDER, filename)
-    file.save(path)
+    try:
+        image_file = request.files['image']
 
-    image = Image.open(path)
+        image = Image.open(BytesIO(image_file.read()))
 
-    # Step 1: Object Detection
-    detections, crops = detect_items(image)
+        # Validate image format
+        if image.format not in ('JPEG', 'PNG'):
+            return jsonify({'error': 'Unsupported image format'}), 400
 
-    # Step 2: CLIP Labeling
-    enriched = enrich_with_clip(crops)
+        items, crops, annotated_img = detect_items(image)
+        # save_scan_result(current_user.id, items)
 
-    # Step 3: Save Detection History
-    save_scan_result("default_user", enriched)
+        return jsonify({
+            "photo": image_to_base64(annotated_img),
+            "items": items,
+        })
+    
+    except UnidentifiedImageError:
+        return jsonify({'error': 'Invalid or corrupted image'}), 400
+        
+    except Exception as e:
+        return jsonify({'error': 'Processing failed', 'code': str(e)}), 500
 
-    # Step 4: Recipe Generation
-    recipe = generate_recipe(enriched)
+def image_to_base64(pil_image):
+    """Convert PIL image to base64-encoded JPEG"""
+    buffer = BytesIO()
+    pil_image.save(buffer, format="JPEG", quality=85)
+    return base64.b64encode(buffer.getvalue()).decode('utf-8')
 
-    # Step 5: Compare to Ideal Fridge
-    missing = get_missing_items(enriched)
-
-    return jsonify({
-        'ingredients': enriched,
-        'recipe': recipe,
-        'missing_items': missing
-    })
 
 
 @fridge_bp.route('/api/fridge/add', methods=['POST'])

@@ -87,8 +87,10 @@ def analyze_freshness(crop, label):
     """Analyze crop freshness using CLIP"""
     prompts = [
         f"fresh {label}",
+        f"correct {label}",
         f"rotten {label}",
-        f"slightly old {label}"
+        f"slightly old {label}",
+        f"old {label}",
     ]
     
     inputs = clip_processor(
@@ -100,10 +102,17 @@ def analyze_freshness(crop, label):
     
     outputs = clip_model(**inputs)
     probs = outputs.logits_per_image.softmax(dim=1).tolist()[0]
+
+    freshness_tag = None
+    highest_prob = 0
+    for i, (prompt, prob) in enumerate(zip(prompts, probs)):
+        if prob > highest_prob:
+            highest_prob = prob
+            freshness_tag = prompt
     
     return {
         'predictions': dict(zip(prompts, probs)),
-        'freshness_score': probs[0]  # Probability of being "fresh"
+        'freshness_score': freshness_tag  # Probability of being "fresh"
     }
 
 
@@ -120,5 +129,4 @@ if __name__ == '__main__':
     # Display results
     annotated_img.show()
     print(f"Found {len(items)} items:")
-    for item in items:
-        print(f"- {item['label']} ({item['confidence']:.2f}), Freshness: {item['freshness']['freshness_score']:.2f}")
+    print(items)
