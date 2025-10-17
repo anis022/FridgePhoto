@@ -96,3 +96,7 @@ We created FridgePhoto to solve this everyday problem by making meal planning sm
   
 - **Smart Fridge Integration:**  
   Envisioning a future where a built-in fridge camera keeps the app continuously updated on your inventory, eliminating last-minute grocery runs and guesswork.
+
+## Demo
+<img width="806" height="483" alt="image" src="https://github.com/user-attachments/assets/74db45e0-5206-4c84-894f-32980902fc18" />
+<img width="578" height="573" alt="image" src="https://github.com/user-attachments/assets/f0c09984-0222-4467-a385-7190e544b31e" />
